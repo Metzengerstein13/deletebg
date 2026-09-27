@@ -167,25 +167,29 @@
             reader.readAsDataURL(file);
         }
 
-        // Extracción de fondo con ruta externa explícita
+        // Extracción de fondo sin bloqueo CORS
         removeBgBtn.addEventListener('click', async () => {
             if (!rawImage) return;
 
             statusContainer.classList.remove('hidden');
             progressBarContainer.classList.remove('hidden');
             progressBar.style.width = '0%';
-            statusText.innerText = "Descargando modelo de IA e iniciando procesamiento local...";
+            statusText.innerText = "Descargando modelo de IA (primer uso puede demorar unos segundos)...";
             removeBgBtn.disabled = true;
 
             try {
                 const blob = await removeBackground(rawImage.src, {
                     model: 'small',
-                    publicPath: "https://cdn.jsdelivr.net/npm/@imgly/background-removal-data@1.5.5/dist/",
+                    fetchArgs: {
+                        mode: 'cors'
+                    },
                     progress: (key, current, total) => {
                         if (total) {
                             const percent = Math.round((current / total) * 100);
                             progressBar.style.width = `${percent}%`;
-                            statusText.innerText = `Cargando IA (${key}): ${percent}%`;
+                            statusText.innerText = `Cargando archivo (${key}): ${percent}%`;
+                        } else {
+                            statusText.innerText = `Procesando imagen con IA...`;
                         }
                     }
                 });
@@ -201,8 +205,8 @@
                 };
                 cleanedImg.src = url;
             } catch (err) {
-                console.error("Error al procesar:", err);
-                statusText.innerText = "❌ Ocurrió un error al descargar o procesar la imagen con la IA.";
+                console.error("Error detallado:", err);
+                statusText.innerText = "❌ No se pudo cargar el modelo de IA. Intenta recargar la página o desactivar bloqueadores de anuncios.";
                 progressBarContainer.classList.add('hidden');
                 removeBgBtn.disabled = false;
             }
@@ -279,10 +283,6 @@
             link.download = 'imagen-sin-fondo-hd.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
-        });
-    </script>
-</body>
-</html>
         });
     </script>
 </body>
