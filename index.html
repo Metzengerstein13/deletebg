@@ -4,43 +4,181 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Studio - Clean & Upscale Local</title>
-    <!-- Tailwind CSS CDN v3 Standalone -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        /* Estilos base del tema oscuro incorporados */
+        /* CSS Nativo Garantizado para Modo Oscuro */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             background-color: #0f172a !important;
             color: #f1f5f9 !important;
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
+
         header {
-            background-color: #020617 !important;
-            border-bottom: 1px solid #1e293b !important;
+            background-color: #020617;
+            border-bottom: 1px solid #1e293b;
+            padding: 1rem;
         }
+
+        .header-container {
+            max-width: 80rem;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            background-color: #022c22;
+            color: #6ee7b7;
+            border: 1px solid #065f46;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
+
+        .main-layout {
+            flex: 1;
+            max-width: 80rem;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 350px 1fr;
+            }
+        }
+
         aside {
-            background-color: #1e293b !important;
-            border: 1px solid #334155 !important;
+            background-color: #1e293b;
+            border: 1px solid #334155;
             border-radius: 0.75rem;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            max-height: 85vh;
+            overflow-y: auto;
         }
-        .bg-slate-900\/50, .bg-slate-900 {
-            background-color: #0f172a !important;
+
+        .drop-zone {
+            border: 2px dashed #475569;
+            background-color: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
         }
-        .border-slate-700, .border-slate-600 {
-            border-color: #334155 !important;
+
+        .drop-zone:hover {
+            border-color: #6366f1;
         }
-        .text-slate-400 {
-            color: #94a3b8 !important;
+
+        .btn {
+            width: 100%;
+            padding: 0.625rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s, background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
-        .text-slate-300 {
-            color: #cbd5e1 !important;
+
+        .btn-indigo {
+            background-color: #4f46e5;
+            color: #ffffff;
         }
-        select, input[type="text"] {
-            background-color: #0f172a !important;
-            color: #ffffff !important;
-            border: 1px solid #334155 !important;
+        .btn-indigo:hover:not(:disabled) {
+            background-color: #6366f1;
         }
-        .checkerboard {
+
+        .btn-emerald {
+            background-color: #059669;
+            color: #ffffff;
+            margin-top: auto;
+        }
+        .btn-emerald:hover:not(:disabled) {
+            background-color: #10b981;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #334155;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #818cf8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        select, input[type="range"] {
+            width: 100%;
+        }
+
+        select {
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            color: #ffffff;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            outline: none;
+        }
+
+        .info-card {
+            background-color: #0f172a;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #334155;
+            font-size: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            color: #94a3b8;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .canvas-container {
+            flex: 1;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 400px;
             background-color: #020617;
             background-image: linear-gradient(45deg, #0f172a 25%, transparent 25%),
                               linear-gradient(-45deg, #0f172a 25%, transparent 25%),
@@ -49,57 +187,93 @@
             background-size: 20px 20px;
             background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
         }
+
+        canvas {
+            max-width: 100%;
+            max-height: 75vh;
+            object-fit: contain;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(2, 6, 23, 0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .progress-bg {
+            width: 16rem;
+            background-color: #1e293b;
+            height: 0.5rem;
+            border-radius: 9999px;
+            overflow: hidden;
+            border: 1px solid #334155;
+            margin-top: 0.5rem;
+        }
+
+        .progress-bar {
+            background-color: #6366f1;
+            height: 100%;
+            width: 0%;
+            transition: width 0.2s;
+        }
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body>
 
-    <!-- Encabezado -->
-    <header class="p-4">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold text-white flex items-center gap-2">
-                <span class="text-indigo-400">✨ AI Studio</span> - Clean & Upscale
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <h1 style="font-size: 1.25rem; font-weight: bold; color: white;">
+                <span style="color: #818cf8;">✨ AI Studio</span> - Clean & Upscale
             </h1>
-            <span class="text-xs bg-emerald-950 text-emerald-300 border border-emerald-800 px-3 py-1 rounded-full font-medium">
-                Procesamiento 100% Local (Gratis)
-            </span>
+            <span class="badge">Procesamiento 100% Local (Gratis)</span>
         </div>
     </header>
 
     <!-- Layout Principal -->
-    <div class="flex-1 max-w-7xl w-full mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="main-layout">
 
-        <!-- Panel de Ajustes -->
-        <aside class="lg:col-span-4 p-5 flex flex-col gap-5 overflow-y-auto max-h-[85vh]">
-
-            <!-- Carga de Imagen -->
+        <!-- Panel Lateral -->
+        <aside>
             <div>
-                <label class="block text-sm font-semibold mb-2 text-slate-200">Imagen de Origen</label>
-                <div id="dropZone" class="border-2 border-dashed border-slate-600 hover:border-indigo-500 bg-slate-900/50 rounded-lg p-4 text-center cursor-pointer transition">
+                <label style="display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: #e2e8f0;">Imagen de Origen</label>
+                <div id="dropZone" class="drop-zone">
                     <input type="file" id="fileInput" accept="image/*" class="hidden">
-                    <p class="text-xs text-slate-400">Haz clic o arrastra tu imagen aquí</p>
-                    <p class="text-[10px] text-slate-400 mt-1">Soporta PNG, JPG, WebP</p>
+                    <p style="font-size: 0.75rem; color: #94a3b8;">Haz clic o arrastra tu imagen aquí</p>
+                    <p style="font-size: 0.625rem; color: #64748b; margin-top: 0.25rem;">Soporta PNG, JPG, WebP</p>
                 </div>
             </div>
 
-            <hr class="border-slate-700">
+            <hr>
 
-            <!-- Fase 1: Fondo -->
-            <div class="space-y-3">
-                <h2 class="text-xs font-bold text-indigo-400 uppercase tracking-wider">1. Extracción de Sujeto</h2>
-                <button id="removeBgBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg text-xs transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <!-- Sección 1 -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <h2 class="section-title">1. Extracción de Sujeto</h2>
+                <button id="removeBgBtn" class="btn btn-indigo" disabled>
                     ⚡ Remover Fondo con IA
                 </button>
             </div>
 
-            <hr class="border-slate-700">
+            <hr>
 
-            <!-- Fase 2: Escalado & Nitidez -->
-            <div class="space-y-4">
-                <h2 class="text-xs font-bold text-indigo-400 uppercase tracking-wider">2. Ampliación & Mejora (Upscale)</h2>
+            <!-- Sección 2 -->
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <h2 class="section-title">2. Ampliación & Mejora (Upscale)</h2>
 
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1">Escala de Ampliación:</label>
-                    <select id="scaleFactor" class="w-full bg-slate-900 border border-slate-700 text-xs rounded p-2 text-white accent-indigo-500">
+                    <label style="display: block; font-size: 0.75rem; color: #cbd5e1; margin-bottom: 0.25rem;">Escala de Ampliación:</label>
+                    <select id="scaleFactor">
                         <option value="1">Original (1x)</option>
                         <option value="2">2x HD (Doble resolución)</option>
                         <option value="4">4x Ultra HD (Cuádruple resolución)</option>
@@ -107,45 +281,43 @@
                 </div>
 
                 <div>
-                    <div class="flex justify-between text-xs mb-1">
-                        <label class="text-slate-300">Filtro de Nitidez (Enfoque):</label>
-                        <span id="sharpnessVal" class="font-mono text-indigo-400">0%</span>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.25rem;">
+                        <span style="color: #cbd5e1;">Filtro de Nitidez (Enfoque):</span>
+                        <span id="sharpnessVal" style="font-family: monospace; color: #818cf8;">0%</span>
                     </div>
-                    <input type="range" id="sharpness" min="0" max="100" value="0" class="w-full accent-indigo-500">
+                    <input type="range" id="sharpness" min="0" max="100" value="0">
                 </div>
             </div>
 
-            <hr class="border-slate-700">
+            <hr>
 
-            <!-- Información de Resolución -->
-            <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 text-xs space-y-1">
-                <div class="flex justify-between text-slate-400">
-                    <span>Dimensiones:</span>
-                    <span id="dimInfo" class="font-mono text-slate-200">0 x 0 px</span>
-                </div>
+            <!-- Info -->
+            <div class="info-card">
+                <span>Dimensiones:</span>
+                <span id="dimInfo" style="font-family: monospace; color: #f1f5f9;">0 x 0 px</span>
             </div>
 
-            <!-- Exportar -->
-            <button id="downloadBtn" class="mt-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg text-xs transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <!-- Botón Descargar -->
+            <button id="downloadBtn" class="btn btn-emerald" disabled>
                 💾 Descargar Imagen Procesada
             </button>
         </aside>
 
-        <!-- Área de Vista Previa -->
-        <main class="lg:col-span-8 flex flex-col gap-4">
-            <div class="flex-1 border border-slate-700 rounded-xl overflow-hidden flex items-center justify-center relative min-h-[400px] checkerboard">
-                <canvas id="mainCanvas" class="max-w-full max-h-[75vh] object-contain shadow-2xl"></canvas>
-                <div id="statusContainer" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-10">
-                    <p id="statusText" class="text-slate-300 text-sm font-medium mb-2">Carga una imagen para comenzar</p>
-                    <div id="progressBarContainer" class="w-64 bg-slate-800 h-2 rounded-full overflow-hidden hidden border border-slate-700">
-                        <div id="progressBar" class="bg-indigo-500 h-full w-0 transition-all duration-200"></div>
+        <!-- Área del Canvas -->
+        <main>
+            <div class="canvas-container">
+                <canvas id="mainCanvas"></canvas>
+                <div id="statusContainer" class="overlay">
+                    <p id="statusText" style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500;">Carga una imagen para comenzar</p>
+                    <div id="progressBarContainer" class="progress-bg hidden">
+                        <div id="progressBar" class="progress-bar"></div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Módulo JS -->
+    <!-- Script Funcional (Módulo IA) -->
     <script type="module">
         import { removeBackground } from "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm";
 
@@ -168,13 +340,12 @@
         let rawImage = null;
         let cleanImage = null;
 
-        // Carga de archivo
         dropZone.addEventListener('click', () => fileInput.click());
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-indigo-500'));
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#6366f1'; });
+        dropZone.addEventListener('dragleave', () => dropZone.style.borderColor = '#475569');
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropZone.classList.remove('border-indigo-500');
+            dropZone.style.borderColor = '#475569';
             if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
         });
 
@@ -200,7 +371,6 @@
             reader.readAsDataURL(file);
         }
 
-        // Extracción de fondo
         removeBgBtn.addEventListener('click', async () => {
             if (!rawImage) return;
 
@@ -236,14 +406,13 @@
                 };
                 cleanedImg.src = url;
             } catch (err) {
-                console.error("Error detallado:", err);
+                console.error("Error:", err);
                 statusText.innerText = "❌ Error al procesar la imagen.";
                 progressBarContainer.classList.add('hidden');
                 removeBgBtn.disabled = false;
             }
         });
 
-        // Eventos
         scaleFactorSelect.addEventListener('change', renderPipeline);
         sharpnessInput.addEventListener('input', () => {
             sharpnessVal.innerText = sharpnessInput.value + '%';
