@@ -4,29 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Studio - Clean & Upscale Local</title>
-    <!-- Tailwind CSS CDN -->
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Tailwind CSS CDN v3 Standalone -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
+        /* Estilos base del tema oscuro incorporados */
+        body {
+            background-color: #0f172a !important;
+            color: #f1f5f9 !important;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+        }
+        header {
+            background-color: #020617 !important;
+            border-bottom: 1px solid #1e293b !important;
+        }
+        aside {
+            background-color: #1e293b !important;
+            border: 1px solid #334155 !important;
+            border-radius: 0.75rem;
+        }
+        .bg-slate-900\/50, .bg-slate-900 {
+            background-color: #0f172a !important;
+        }
+        .border-slate-700, .border-slate-600 {
+            border-color: #334155 !important;
+        }
+        .text-slate-400 {
+            color: #94a3b8 !important;
+        }
+        .text-slate-300 {
+            color: #cbd5e1 !important;
+        }
+        select, input[type="text"] {
+            background-color: #0f172a !important;
+            color: #ffffff !important;
+            border: 1px solid #334155 !important;
+        }
         .checkerboard {
-            background-color: #0f172a;
-            background-image: linear-gradient(45deg, #1e293b 25%, transparent 25%),
-                              linear-gradient(-45deg, #1e293b 25%, transparent 25%),
-                              linear-gradient(45deg, transparent 75%, #1e293b 75%),
-                              linear-gradient(-45deg, transparent 75%, #1e293b 75%);
+            background-color: #020617;
+            background-image: linear-gradient(45deg, #0f172a 25%, transparent 25%),
+                              linear-gradient(-45deg, #0f172a 25%, transparent 25%),
+                              linear-gradient(45deg, transparent 75%, #0f172a 75%),
+                              linear-gradient(-45deg, transparent 75%, #0f172a 75%);
             background-size: 20px 20px;
             background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+<body class="min-h-screen flex flex-col">
 
     <!-- Encabezado -->
-    <header class="border-b border-slate-800 bg-slate-950 p-4">
+    <header class="p-4">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <h1 class="text-xl font-bold text-white flex items-center gap-2">
-                <span class="text-indigo-500">✨ AI Studio</span> - Clean & Upscale
+                <span class="text-indigo-400">✨ AI Studio</span> - Clean & Upscale
             </h1>
-            <span class="text-xs bg-emerald-950 text-emerald-300 border border-emerald-800 px-2.5 py-1 rounded-full font-medium">
+            <span class="text-xs bg-emerald-950 text-emerald-300 border border-emerald-800 px-3 py-1 rounded-full font-medium">
                 Procesamiento 100% Local (Gratis)
             </span>
         </div>
@@ -36,15 +69,15 @@
     <div class="flex-1 max-w-7xl w-full mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         <!-- Panel de Ajustes -->
-        <aside class="lg:col-span-4 bg-slate-800 border border-slate-700 rounded-xl p-5 flex flex-col gap-5 overflow-y-auto max-h-[85vh]">
+        <aside class="lg:col-span-4 p-5 flex flex-col gap-5 overflow-y-auto max-h-[85vh]">
 
             <!-- Carga de Imagen -->
             <div>
-                <label class="block text-sm font-semibold mb-2">Imagen de Origen</label>
+                <label class="block text-sm font-semibold mb-2 text-slate-200">Imagen de Origen</label>
                 <div id="dropZone" class="border-2 border-dashed border-slate-600 hover:border-indigo-500 bg-slate-900/50 rounded-lg p-4 text-center cursor-pointer transition">
                     <input type="file" id="fileInput" accept="image/*" class="hidden">
                     <p class="text-xs text-slate-400">Haz clic o arrastra tu imagen aquí</p>
-                    <p class="text-[10px] text-slate-500 mt-1">Soporta PNG, JPG, WebP</p>
+                    <p class="text-[10px] text-slate-400 mt-1">Soporta PNG, JPG, WebP</p>
                 </div>
             </div>
 
@@ -75,7 +108,7 @@
 
                 <div>
                     <div class="flex justify-between text-xs mb-1">
-                        <label>Filtro de Nitidez (Enfoque):</label>
+                        <label class="text-slate-300">Filtro de Nitidez (Enfoque):</label>
                         <span id="sharpnessVal" class="font-mono text-indigo-400">0%</span>
                     </div>
                     <input type="range" id="sharpness" min="0" max="100" value="0" class="w-full accent-indigo-500">
@@ -85,7 +118,7 @@
             <hr class="border-slate-700">
 
             <!-- Información de Resolución -->
-            <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-700 text-xs space-y-1">
+            <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 text-xs space-y-1">
                 <div class="flex justify-between text-slate-400">
                     <span>Dimensiones:</span>
                     <span id="dimInfo" class="font-mono text-slate-200">0 x 0 px</span>
@@ -100,7 +133,7 @@
 
         <!-- Área de Vista Previa -->
         <main class="lg:col-span-8 flex flex-col gap-4">
-            <div class="flex-1 bg-slate-950 border border-slate-800 rounded-xl overflow-hidden flex items-center justify-center relative min-h-[400px] checkerboard">
+            <div class="flex-1 border border-slate-700 rounded-xl overflow-hidden flex items-center justify-center relative min-h-[400px] checkerboard">
                 <canvas id="mainCanvas" class="max-w-full max-h-[75vh] object-contain shadow-2xl"></canvas>
                 <div id="statusContainer" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-10">
                     <p id="statusText" class="text-slate-300 text-sm font-medium mb-2">Carga una imagen para comenzar</p>
@@ -112,7 +145,7 @@
         </main>
     </div>
 
-    <!-- Módulo JS de Importación Directa ESM -->
+    <!-- Módulo JS -->
     <script type="module">
         import { removeBackground } from "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm";
 
@@ -167,29 +200,27 @@
             reader.readAsDataURL(file);
         }
 
-        // Extracción de fondo sin bloqueo CORS
+        // Extracción de fondo
         removeBgBtn.addEventListener('click', async () => {
             if (!rawImage) return;
 
             statusContainer.classList.remove('hidden');
             progressBarContainer.classList.remove('hidden');
             progressBar.style.width = '0%';
-            statusText.innerText = "Descargando modelo de IA (primer uso puede demorar unos segundos)...";
+            statusText.innerText = "Descargando modelo de IA...";
             removeBgBtn.disabled = true;
 
             try {
                 const blob = await removeBackground(rawImage.src, {
                     model: 'small',
-                    fetchArgs: {
-                        mode: 'cors'
-                    },
+                    fetchArgs: { mode: 'cors' },
                     progress: (key, current, total) => {
                         if (total) {
                             const percent = Math.round((current / total) * 100);
                             progressBar.style.width = `${percent}%`;
-                            statusText.innerText = `Cargando archivo (${key}): ${percent}%`;
+                            statusText.innerText = `Cargando IA (${key}): ${percent}%`;
                         } else {
-                            statusText.innerText = `Procesando imagen con IA...`;
+                            statusText.innerText = `Procesando imagen...`;
                         }
                     }
                 });
@@ -206,7 +237,7 @@
                 cleanedImg.src = url;
             } catch (err) {
                 console.error("Error detallado:", err);
-                statusText.innerText = "❌ No se pudo cargar el modelo de IA. Intenta recargar la página o desactivar bloqueadores de anuncios.";
+                statusText.innerText = "❌ Error al procesar la imagen.";
                 progressBarContainer.classList.add('hidden');
                 removeBgBtn.disabled = false;
             }
